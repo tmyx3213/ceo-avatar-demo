@@ -22,6 +22,7 @@ export function CeoAvatarDemo() {
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasGreeted, setHasGreeted] = useState(false);
+  const [conversationId, setConversationId] = useState<string | undefined>();
 
   // セッション開始後に挨拶
   useEffect(() => {
@@ -33,6 +34,7 @@ export function CeoAvatarDemo() {
     }
     if (sessionState === "inactive") {
       setHasGreeted(false);
+      setConversationId(undefined);
     }
   }, [sessionState, hasGreeted, addMessage, speak]);
 
@@ -45,9 +47,11 @@ export function CeoAvatarDemo() {
       addMessage("user", message);
 
       try {
-        const response = await getLLMResponse(message);
-        addMessage("avatar", response);
-        await speak(response);
+        const { answer, conversationId: newConversationId } =
+          await getLLMResponse(message, conversationId);
+        setConversationId(newConversationId);
+        addMessage("avatar", answer);
+        await speak(answer);
       } catch (error) {
         console.error("Failed to get response:", error);
         addMessage("avatar", "申し訳ございません。エラーが発生しました。");
@@ -55,14 +59,14 @@ export function CeoAvatarDemo() {
         setIsProcessing(false);
       }
     },
-    [sessionState, isProcessing, addMessage, speak]
+    [sessionState, isProcessing, conversationId, addMessage, speak]
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen flex flex-col overflow-hidden bg-gray-50">
       {/* ヘッダー */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-4">
+      <header className="flex-shrink-0 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
               <svg
@@ -92,43 +96,44 @@ export function CeoAvatarDemo() {
       </header>
 
       {/* メインコンテンツ */}
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        {/* アバター表示エリア */}
-        <section>
-          <AvatarDisplay
-            videoRef={videoRef}
-            sessionState={sessionState}
-            isAvatarTalking={isAvatarTalking}
-          />
-        </section>
-
-        {/* コントロールボタン */}
-        <section>
-          <SessionControls
-            sessionState={sessionState}
-            onStart={startSession}
-            onStop={stopSession}
-          />
-        </section>
-
-        {/* 会話履歴 */}
-        <section>
-          <ChatHistory messages={messages} />
-        </section>
-
-        {/* メッセージ入力 */}
-        <section>
-          <MessageInput
-            onSend={handleSendMessage}
-            disabled={sessionState !== "connected"}
-            isProcessing={isProcessing || isAvatarTalking}
-          />
-        </section>
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-4 overflow-hidden">
+        <div className="flex flex-col lg:flex-row gap-4 h-full">
+          {/* 左カラム: アバター + コントロール */}
+          <div className="lg:w-[58%] flex flex-col gap-4">
+            <section className="flex-1 min-h-0">
+              <AvatarDisplay
+                videoRef={videoRef}
+                sessionState={sessionState}
+                isAvatarTalking={isAvatarTalking}
+              />
+            </section>
+            <section className="flex-shrink-0">
+              <SessionControls
+                sessionState={sessionState}
+                onStart={startSession}
+                onStop={stopSession}
+              />
+            </section>
+          </div>
+          {/* 右カラム: チャット + 入力 */}
+          <div className="lg:w-[42%] flex flex-col gap-3 min-h-0">
+            <section className="flex-1 min-h-0">
+              <ChatHistory messages={messages} />
+            </section>
+            <section className="flex-shrink-0">
+              <MessageInput
+                onSend={handleSendMessage}
+                disabled={sessionState !== "connected"}
+                isProcessing={isProcessing || isAvatarTalking}
+              />
+            </section>
+          </div>
+        </div>
       </main>
 
       {/* フッター */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3">
-        <div className="max-w-4xl mx-auto px-4 text-center text-sm text-gray-500">
+      <footer className="flex-shrink-0 bg-white border-t border-gray-200 py-3">
+        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500">
           Powered by HeyGen Interactive Avatar
         </div>
       </footer>

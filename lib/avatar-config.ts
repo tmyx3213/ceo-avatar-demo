@@ -17,4 +17,5 @@ export const getAvatarConfig = () => ({
     rate: AVATAR_CONFIG.voice.rate,
     emotion: AVATAR_CONFIG.voice.emotion,
   },
+  activityIdleTimeout: 300, // 5分間操作がない場合にセッション終了
 });

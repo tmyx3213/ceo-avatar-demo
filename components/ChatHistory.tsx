@@ -18,13 +18,13 @@ export function ChatHistory({ messages }: ChatHistoryProps) {
   }, [messages]);
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col h-full">
+      <div className="flex-shrink-0 px-4 py-3 bg-gray-50 border-b border-gray-200">
         <h3 className="font-medium text-gray-700">会話履歴</h3>
       </div>
       <div
         ref={scrollRef}
-        className="h-48 overflow-y-auto p-4 space-y-3 chat-history"
+        className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3 chat-history"
       >
         {messages.length === 0 ? (
           <p className="text-gray-400 text-sm text-center py-4">

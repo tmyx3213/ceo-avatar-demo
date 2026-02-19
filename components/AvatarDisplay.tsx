@@ -18,7 +18,7 @@ export function AvatarDisplay({
   const isConnecting = sessionState === "connecting";
 
   return (
-    <div className="relative w-full aspect-video bg-gray-900 rounded-lg overflow-hidden">
+    <div className="relative w-full aspect-video lg:aspect-auto lg:h-full bg-gray-900 rounded-lg overflow-hidden">
       {/* ステータスバッジ */}
       {isConnected && (
         <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-black/50 text-white text-sm px-3 py-1.5 rounded-full">
