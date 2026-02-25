@@ -1,19 +1,24 @@
-const DIFY_API_KEY = process.env.DIFY_API_KEY;
-const DIFY_BASE_URL = process.env.DIFY_BASE_URL;
+import {
+  getDifyConfigByVariant,
+  type AvatarVariant,
+} from "@/lib/liveavatar-config";
 
 export async function POST(request: Request) {
   try {
-    if (!DIFY_API_KEY || !DIFY_BASE_URL) {
-      throw new Error("Dify API configuration is missing from .env");
-    }
-
-    const { query, conversation_id } = await request.json();
+    const { query, conversation_id, variant: rawVariant } = await request.json();
 
     if (!query || typeof query !== "string") {
       return new Response(
         JSON.stringify({ error: "query is required" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
+    }
+
+    const variant: AvatarVariant = rawVariant === "custom" ? "custom" : "default";
+    const { apiKey, baseUrl } = getDifyConfigByVariant(variant);
+
+    if (!apiKey || !baseUrl) {
+      throw new Error(`Dify API configuration for "${variant}" is missing from .env`);
     }
 
     const body: Record<string, unknown> = {
@@ -27,11 +32,11 @@ export async function POST(request: Request) {
       body.conversation_id = conversation_id;
     }
 
-    const res = await fetch(`${DIFY_BASE_URL}/chat-messages`, {
+    const res = await fetch(`${baseUrl}/chat-messages`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${DIFY_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify(body),
     });

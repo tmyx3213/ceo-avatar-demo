@@ -5,10 +5,12 @@ export interface LLMResponse {
 
 /**
  * LLM応答を取得する（Dify API経由）
+ * variant で使用するDifyアプリを切り替え
  */
 export async function getLLMResponse(
   message: string,
-  conversationId?: string
+  conversationId?: string,
+  variant: "default" | "custom" = "default"
 ): Promise<LLMResponse> {
   const res = await fetch("/api/chat", {
     method: "POST",
@@ -16,6 +18,7 @@ export async function getLLMResponse(
     body: JSON.stringify({
       query: message,
       conversation_id: conversationId,
+      variant,
     }),
   });
 

@@ -1,16 +1,18 @@
+import { AvatarQuality, VoiceEmotion } from "@heygen/streaming-avatar";
+
 // アバター設定（後で差し替え可能）
 export const AVATAR_CONFIG = {
-  avatarName: "Ann_Therapist_public", // 後でカスタムIDに差し替え可能
+  avatarName: "6faf9b31-edde-450b-a5d4-0e342eca78b7", // カスタムCEOアバター
   language: "ja", // 日本語
   voice: {
     rate: 1.0,
-    emotion: "FRIENDLY" as const,
+    emotion: VoiceEmotion.FRIENDLY,
   },
 };
 
 // HeyGen SDK用の設定
 export const getAvatarConfig = () => ({
-  quality: "high" as const,
+  quality: AvatarQuality.High,
   avatarName: AVATAR_CONFIG.avatarName,
   language: AVATAR_CONFIG.language,
   voice: {

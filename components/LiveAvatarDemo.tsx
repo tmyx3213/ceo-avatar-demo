@@ -2,14 +2,14 @@
 
 import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import { useCeoAvatar } from "@/hooks/useCeoAvatar";
+import { useLiveAvatar } from "@/hooks/useLiveAvatar";
 import { getLLMResponse, getGreetingMessage } from "@/lib/llm-service";
 import { AvatarDisplay } from "./AvatarDisplay";
 import { SessionControls } from "./SessionControls";
 import { ChatHistory } from "./ChatHistory";
 import { MessageInput } from "./MessageInput";
 
-export function CeoAvatarDemo() {
+export function LiveAvatarDemo() {
   const {
     videoRef,
     sessionState,
@@ -19,7 +19,7 @@ export function CeoAvatarDemo() {
     stopSession,
     speak,
     addMessage,
-  } = useCeoAvatar();
+  } = useLiveAvatar("custom");
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasGreeted, setHasGreeted] = useState(false);
@@ -49,7 +49,7 @@ export function CeoAvatarDemo() {
 
       try {
         const { answer, conversationId: newConversationId } =
-          await getLLMResponse(message, conversationId);
+          await getLLMResponse(message, conversationId, "custom");
         setConversationId(newConversationId);
         addMessage("avatar", answer);
         await speak(answer);
@@ -70,7 +70,7 @@ export function CeoAvatarDemo() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center">
                 <svg
                   className="w-6 h-6 text-white"
                   fill="none"
@@ -88,6 +88,9 @@ export function CeoAvatarDemo() {
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
                   社長AI アバターデモ
+                  <span className="ml-2 text-sm font-normal text-emerald-600">
+                    LiveAvatar
+                  </span>
                 </h1>
                 <p className="text-sm text-gray-500">
                   AIアバターとリアルタイムで対話できます
@@ -95,10 +98,9 @@ export function CeoAvatarDemo() {
               </div>
             </div>
             <Link
-              href="/liveavatar"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+              href="/"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              カスタム版へ
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -109,9 +111,10 @@ export function CeoAvatarDemo() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
+              デフォルト版へ
             </Link>
           </div>
         </div>
